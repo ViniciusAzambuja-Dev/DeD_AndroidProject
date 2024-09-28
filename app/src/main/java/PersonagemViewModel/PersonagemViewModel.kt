@@ -1,4 +1,4 @@
-package DataView.PersonagemViewModel
+package PersonagemViewModel
 
 import androidx.lifecycle.ViewModel
 import org.example.Personagem.Personagem

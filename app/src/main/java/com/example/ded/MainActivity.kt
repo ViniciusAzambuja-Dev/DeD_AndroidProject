@@ -1,6 +1,6 @@
 package com.example.ded
 
-import DataView.PersonagemViewModel.PersonagemViewModel
+import PersonagemViewModel.PersonagemViewModel
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -22,7 +22,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     composable("atribuir_pontos") {
                         val personagem = personagemViewModel.personagem
-                        AtribuirPontosScreen(personagem)
+                        if (personagem != null) {
+                            AtribuirPontosScreen(personagem)
+                        }
                     }
                 }
         }

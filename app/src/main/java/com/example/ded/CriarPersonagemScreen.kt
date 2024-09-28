@@ -1,7 +1,7 @@
 package com.example.ded
 
-import DataView.PersonagemViewModel.PersonagemViewModel
 import androidx.compose.runtime.Composable
+import PersonagemViewModel.PersonagemViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,10 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.delay
 import org.example.Personagem.CriadorDePersonagem
 import org.example.Personagem.Personagem
-
 
 @Composable
 fun CriarPersonagemScreen(
@@ -87,8 +84,7 @@ fun CriarPersonagemScreen(
                 value = nome,
                 onValueChange = { nome = it },
                 placeholder = { Text(text = "Nome do personagem") },
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
@@ -107,7 +103,6 @@ fun CriarPersonagemScreen(
             TextField(
                 value = numeroRaca,
                 onValueChange = { newValue ->
-
                     if (newValue.all { char -> char.isDigit() } && newValue.length <= 2) {
                         numeroRaca = newValue
                     }
@@ -116,35 +111,21 @@ fun CriarPersonagemScreen(
                 modifier = Modifier.weight(1f)
             )
         }
+
         Row(modifier = Modifier.padding(top = 8.dp)) {
-            Column(modifier = Modifier.weight(1f)) {
-                racaList.take(6).forEach { (numero, raca) ->
-                    Text(
-                        text = "$numero - $raca",
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(2.dp)
-                    )
-                }
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                racaList.drop(6).take(6).forEach { (numero, raca) ->
-                    Text(
-                        text = "$numero - $raca",
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(2.dp)
-                    )
-                }
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                racaList.drop(12).forEach { (numero, raca) ->
-                    Text(
-                        text = "$numero - $raca",
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(2.dp)
-                    )
+            racaList.chunked(6).forEach { chunk ->
+                Column(modifier = Modifier.weight(1f)) {
+                    chunk.forEach { (numero, raca) ->
+                        Text(
+                            text = "$numero - $raca",
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(2.dp)
+                        )
+                    }
                 }
             }
         }
+
         Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text(
@@ -163,29 +144,16 @@ fun CriarPersonagemScreen(
                             personagem = CriadorDePersonagem.criarPlayer(nome, opcaoDeRaca)
                             personagemViewModel.personagem = personagem
                             mensagem = "Personagem criado! Nome: ${personagem?.getNome()}"
-
-
-                        } catch (e: Exception) {
+                            navController.navigate("atribuir_pontos")
+                        } catch (e: IllegalArgumentException) {
                             mensagem = e.message ?: "Erro ao criar personagem"
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-
-
-                    ) {
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                ) {
                     Text(text = "Criar Personagem")
                 }
             }
-
-            LaunchedEffect(personagem) {
-                if (personagem != null) {
-                    delay(3000)
-                    navController.navigate("atribuir_pontos/${personagemViewModel.personagem?.getNome()}")
-                }
-            }
-
         }
     }
 }

@@ -54,45 +54,32 @@ class Atributos(private var forca : Int = 8,
         carisma += pontos
     }
 
-    private fun distribuirPontos(pontos: String, opcaoHabilidade : String) {
+    fun distribuirPontos(opcaoHabilidade : Int, pontos: Int) {
 
-        if (pontos.isEmpty()) {
-            throw IllegalArgumentException("Pontos vazios!")
-        } else if(opcaoHabilidade.isEmpty()){
-            throw IllegalArgumentException("Opção de habilidade vazia!")
-        }
-        else {
-            val opcaoDeHabilidade = opcaoHabilidade.toInt()
-            val pontosHabilidade = pontos.toInt()
-            if (opcaoDeHabilidade < 1 || opcaoDeHabilidade > 7) {
-               throw IllegalArgumentException("ERRO: Habilidade deve ser entre 1 e 6\n")
-            } else {
-                if (pontosHabilidade > 7 || pontosHabilidade < 1) {
+                if (pontos > 7 || pontos < 1) {
                     throw IllegalArgumentException("ERRO: Pontos devem ser entre 7 e 1")
-                } else if (pontosDeHabilidade < pontosHabilidade) {
+                } else if (pontosDeHabilidade < pontos) {
                     throw IllegalArgumentException("ERRO: Não há pontos suficientes para essa quantidade!")
                 } else {
-                    modificadorDeCusto(opcaoDeHabilidade, pontosHabilidade)
+                    modificadorDeCusto(opcaoHabilidade, pontos)
                 }
-                when (opcaoDeHabilidade) {
-                    1 -> forca += pontosHabilidade
-                    2 -> destreza += pontosHabilidade
-                    3 -> constituicao += pontosHabilidade
-                    4 -> inteligencia += pontosHabilidade
-                    5 -> sabedoria += pontosHabilidade
-                    6 -> carisma += pontosHabilidade
+                when (opcaoHabilidade) {
+                    1 -> forca += pontos
+                    2 -> destreza += pontos
+                    3 -> constituicao += pontos
+                    4 -> inteligencia += pontos
+                    5 -> sabedoria += pontos
+                    6 -> carisma += pontos
                 }
-            }
-        }
     //adicionarBonusRaca(personagem)
     //modificadorPontosDeVida()
 
     }
 
-    private fun modificadorDeCusto(opcaoDeHabilidade: Int, pontos: Int) {
+    private fun modificadorDeCusto(opcaoHabilidade: Int, pontos: Int) {
 
         val habilidades = intArrayOf(forca, destreza, constituicao, inteligencia, sabedoria, carisma)
-        val valorAtualDaHabilidade = habilidades[opcaoDeHabilidade - 1]
+        val valorAtualDaHabilidade = habilidades[opcaoHabilidade - 1]
         val valorNovoDaHabilidade = valorAtualDaHabilidade + pontos
 
         if (valorNovoDaHabilidade > 15) {

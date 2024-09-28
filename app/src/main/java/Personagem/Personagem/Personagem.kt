@@ -1,13 +1,30 @@
 package org.example.Personagem
 
 import Personagem.Personagem.Atributos
+import org.example.Racas.AltoElfo
+import org.example.Racas.Anao
+import org.example.Racas.AnaoDaColina
+import org.example.Racas.AnaoDaMontanha
+import org.example.Racas.Draconato
+import org.example.Racas.Drow
+import org.example.Racas.Elfo
+import org.example.Racas.ElfoDaFloresta
+import org.example.Racas.Gnomo
+import org.example.Racas.GnomoDaFloresta
+import org.example.Racas.GnomoDasRochas
+import org.example.Racas.Halfling
+import org.example.Racas.HalflingPesLeves
+import org.example.Racas.HalflingRobusto
+import org.example.Racas.Humano
+import org.example.Racas.MeioElfo
+import org.example.Racas.MeioOrc
 import org.example.Racas.Raca
 
 class Personagem {
     private var raca : Raca
     private var pontosDeVida : Int
     private var nome : String
-    internal var atributos : Atributos
+    var atributos : Atributos
 
     constructor(raca : Raca, nome : String){
         this.raca = raca
@@ -20,7 +37,7 @@ class Personagem {
         return nome
     }
 
-   /* internal fun modificadorPontosDeVida(){
+   /* fun modificadorPontosDeVida(){
 
         when(atributos.getConstituicao()){
                 1 -> pontosDeVida -= 5
@@ -41,7 +58,7 @@ class Personagem {
         }
     }
 
-    internal fun adicionarBonusRaca(personagem: Personagem){
+    fun adicionarBonusRaca(personagem: Personagem){
         raca.implementaBonus(personagem)
     }
 
