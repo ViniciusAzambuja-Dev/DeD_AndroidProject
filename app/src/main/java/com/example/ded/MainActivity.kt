@@ -21,10 +21,7 @@ class MainActivity : AppCompatActivity() {
                         CriarPersonagemScreen(navController, personagemViewModel)
                     }
                     composable("atribuir_pontos") {
-                        val personagem = personagemViewModel.personagem
-                        if (personagem != null) {
-                            AtribuirPontosScreen(personagem)
-                        }
+                        AtribuirPontosScreen(personagemViewModel)
                     }
                 }
         }

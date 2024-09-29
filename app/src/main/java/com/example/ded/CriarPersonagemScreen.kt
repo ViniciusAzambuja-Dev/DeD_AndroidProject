@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.example.Personagem.CriadorDePersonagem
-import org.example.Personagem.Personagem
 
 @Composable
 fun CriarPersonagemScreen(
@@ -34,7 +33,6 @@ fun CriarPersonagemScreen(
     var nome by remember { mutableStateOf("") }
     var numeroRaca by remember { mutableStateOf("") }
     var mensagem by remember { mutableStateOf("") }
-    var personagem by remember { mutableStateOf<Personagem?>(null) }
 
     val racaList = listOf(
         1 to "Alto Elfo",
@@ -141,7 +139,7 @@ fun CriarPersonagemScreen(
                     onClick = {
                         try {
                             val opcaoDeRaca = numeroRaca
-                            personagem = CriadorDePersonagem.criarPlayer(nome, opcaoDeRaca)
+                            val personagem  = CriadorDePersonagem.criarPlayer(nome, opcaoDeRaca)
                             personagemViewModel.personagem = personagem
                             mensagem = "Personagem criado! Nome: ${personagem?.getNome()}"
                             navController.navigate("atribuir_pontos")

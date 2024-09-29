@@ -54,12 +54,12 @@ class Atributos(private var forca : Int = 8,
         carisma += pontos
     }
 
-    fun distribuirPontos(opcaoHabilidade : Int, pontos: Int) {
+    internal fun distribuirPontos(opcaoHabilidade : Int, pontos: Int) {
 
                 if (pontos > 7 || pontos < 1) {
                     throw IllegalArgumentException("ERRO: Pontos devem ser entre 7 e 1")
                 } else if (pontosDeHabilidade < pontos) {
-                    throw IllegalArgumentException("ERRO: Não há pontos suficientes para essa quantidade!")
+                    throw IllegalArgumentException("ERRO: Não há pontos suficientes!")
                 } else {
                     modificadorDeCusto(opcaoHabilidade, pontos)
                 }
@@ -94,10 +94,9 @@ class Atributos(private var forca : Int = 8,
             }
         }
         if (custo > pontosDeHabilidade) {
-            throw IllegalArgumentException("ERRO:Custo maior que a quantidade de pontos restantes!")
+            throw IllegalArgumentException("ERRO: Custo maior que a quantidade de pontos restantes!")
         } else {
             pontosDeHabilidade -= custo
         }
-
     }
 }
