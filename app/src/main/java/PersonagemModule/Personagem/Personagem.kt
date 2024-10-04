@@ -1,6 +1,6 @@
 package org.example.Personagem
 
-import Personagem.Personagem.Atributos
+import PersonagemModule.Personagem.Atributos
 import org.example.Racas.Raca
 
 class Personagem {
@@ -18,6 +18,9 @@ class Personagem {
 
    fun getNome(): String {
         return nome
+   }
+   fun getPontosVida(): Int {
+        return pontosDeVida
    }
 
    internal fun modificadorPontosDeVida(){
@@ -41,7 +44,7 @@ class Personagem {
         }
     }
 
-    internal fun adicionarBonusRaca(personagem: Personagem){
-        raca.implementaBonus(personagem)
+    internal fun adicionarBonusRaca(atributos: Atributos){
+        raca.implementaBonus(atributos)
     }
 }

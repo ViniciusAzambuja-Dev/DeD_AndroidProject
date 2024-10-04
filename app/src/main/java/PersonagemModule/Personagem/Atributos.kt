@@ -1,4 +1,7 @@
-package Personagem.Personagem
+package PersonagemModule.Personagem
+
+import org.example.Personagem.Personagem
+
 
 class Atributos(private var forca : Int = 8,
     private var destreza : Int = 8,
@@ -55,25 +58,21 @@ class Atributos(private var forca : Int = 8,
     }
 
     internal fun distribuirPontos(opcaoHabilidade : Int, pontos: Int) {
-
-                if (pontos > 7 || pontos < 1) {
-                    throw IllegalArgumentException("ERRO: Pontos devem ser entre 7 e 1")
-                } else if (pontosDeHabilidade < pontos) {
-                    throw IllegalArgumentException("ERRO: Não há pontos suficientes!")
-                } else {
-                    modificadorDeCusto(opcaoHabilidade, pontos)
-                }
-                when (opcaoHabilidade) {
-                    1 -> forca += pontos
-                    2 -> destreza += pontos
-                    3 -> constituicao += pontos
-                    4 -> inteligencia += pontos
-                    5 -> sabedoria += pontos
-                    6 -> carisma += pontos
-                }
-    //adicionarBonusRaca(personagem)
-    //modificadorPontosDeVida()
-
+        if (pontos > 7 || pontos < 1) {
+            throw IllegalArgumentException("ERRO: Pontos devem ser entre 7 e 1")
+        } else if (pontosDeHabilidade < pontos) {
+            throw IllegalArgumentException("ERRO: Não há pontos suficientes!")
+        } else {
+            modificadorDeCusto(opcaoHabilidade, pontos)
+        }
+        when (opcaoHabilidade) {
+            1 -> forca += pontos
+            2 -> destreza += pontos
+            3 -> constituicao += pontos
+            4 -> inteligencia += pontos
+            5 -> sabedoria += pontos
+            6 -> carisma += pontos
+        }
     }
 
     private fun modificadorDeCusto(opcaoHabilidade: Int, pontos: Int) {

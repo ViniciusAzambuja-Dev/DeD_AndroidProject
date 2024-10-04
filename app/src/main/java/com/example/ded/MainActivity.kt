@@ -21,7 +21,10 @@ class MainActivity : AppCompatActivity() {
                         CriarPersonagemScreen(navController, personagemViewModel)
                     }
                     composable("atribuir_pontos") {
-                        AtribuirPontosScreen(personagemViewModel)
+                        AtribuirPontosScreen(navController, personagemViewModel)
+                    }
+                    composable("menu_final"){
+                        MenuFinalScreen(personagemViewModel)
                     }
                 }
         }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +26,11 @@ import org.example.Personagem.Personagem
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 
 @Composable
-fun AtribuirPontosScreen(personagemViewModel: PersonagemViewModel) {
+fun AtribuirPontosScreen(navController : NavHostController, personagemViewModel: PersonagemViewModel) {
     val personagem = personagemViewModel.personagem
     val focusManager = LocalFocusManager.current
     var pontosRestantes by remember { mutableStateOf(personagem?.atributos?.getQuantDePontosDeHabilidade()) }
@@ -67,6 +69,12 @@ fun AtribuirPontosScreen(personagemViewModel: PersonagemViewModel) {
                 fontSize = 24.sp,
                 modifier = Modifier.padding(top = 10.dp)
             )
+        }
+
+        Button(
+            onClick = { navController.navigate("menu_final")}
+        ) {
+            Text("Avançar")
         }
     }
 }
