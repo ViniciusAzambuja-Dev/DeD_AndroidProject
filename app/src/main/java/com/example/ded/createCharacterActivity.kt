@@ -3,7 +3,6 @@ package com.example.ded
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,26 +27,56 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
-import viewModel.characterViewModel
-import org.example.Personagem.characterCreator
+import androidx.lifecycle.lifecycleScope
+import com.example.ded.characterModule.characterPackage.Character
+import com.example.ded.characterModule.characterPackage.characterCreator
+import com.example.ded.data.AttributesDAO
+import com.example.ded.data.CharacterDAO
+import com.example.ded.data.CharacterDB
+import com.example.ded.entity.AttributesEntity
+import com.example.ded.entity.CharacterEntity
+import kotlinx.coroutines.launch
+import viewModel.AttributesViewModel
+import viewModel.CharacterViewModel
 
 class createCharacterActivity : AppCompatActivity() {
-    private val characterCreated: characterViewModel by viewModels { ViewModelProvider.AndroidViewModelFactory(application) }
+    private lateinit var characterViewModel : CharacterViewModel
+    private lateinit var attributesViewModel: AttributesViewModel
+
+    private lateinit var characterDAO: CharacterDAO
+    private lateinit var attributesDAO: AttributesDAO
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val db = CharacterDB.getDatabase(this)
+        characterDAO = db.characterDAO()
+        attributesDAO = db.attributesDAO()
+
+        characterViewModel = CharacterViewModel(characterDAO)
+        attributesViewModel = AttributesViewModel(attributesDAO)
 
         setContent {
-            createCharacterScreen(characterCreated)
+            createCharacterScreen(::saveCharacter)
+        }
+    }
+
+    fun saveCharacter(character: Character, raceOption : Int){
+        lifecycleScope.launch {
+            val attributesEntity = AttributesEntity()
+            val attributeId = attributesViewModel.saveAttributes(attributesEntity)
+
+            val characterEntity = CharacterEntity()
+            characterEntity.name = character.getName()
+            characterEntity.attributesId = attributeId.toInt()
+            characterEntity.raceId = raceOption
+
+            characterViewModel.saveCharacter(characterEntity)
         }
     }
 }
 
-
 @Composable
-fun createCharacterScreen(
-    characterCreated: characterViewModel
-) {
+fun createCharacterScreen(saveCharacter: (Character, raceOption : Int) -> Unit) {
     var name by remember { mutableStateOf("") }
     var raceNumber by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
@@ -149,9 +178,10 @@ fun createCharacterScreen(
                 Button(
                     onClick = {
                         try {
-                            val skillOption = raceNumber
-                            val character = characterCreator.createCharacter(name, skillOption)
-                            characterCreated.character = character
+                            val raceOption = raceNumber
+                            val character = characterCreator.createCharacter(name, raceOption)
+
+                            saveCharacter(character, raceOption.toInt())
 
                             val intent = Intent(context, assignPointsActivity::class.java)
                             intent.putExtra("personagem", character)

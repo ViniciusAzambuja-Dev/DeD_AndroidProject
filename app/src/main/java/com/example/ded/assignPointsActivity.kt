@@ -31,25 +31,57 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
-import characterModule.characterPackage.Character
+import com.example.ded.characterModule.characterPackage.Character
+import com.example.ded.data.AttributesDAO
+import com.example.ded.data.CharacterDB
+import kotlinx.coroutines.launch
+import viewModel.AttributesViewModel
 
 class assignPointsActivity : AppCompatActivity() {
+
+    private lateinit var attributesViewModel: AttributesViewModel
+    private lateinit var attributesDAO: AttributesDAO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val db = CharacterDB.getDatabase(this)
+        attributesDAO = db.attributesDAO()
+        attributesViewModel = AttributesViewModel(attributesDAO)
+
         val character: Character? = intent.getSerializableExtra("personagem") as? Character
         setContent {
             if (character != null) {
-                assignPointsScreen(character)
+                AssignPointsScreen(character, ::saveNewAttributes)
+            }
+        }
+    }
+
+    fun saveNewAttributes(character: Character) {
+        lifecycleScope.launch {
+            val attributesList = attributesViewModel.getAttributesList()
+            val lastAttributesEntity = attributesList.lastOrNull()
+
+            if (lastAttributesEntity != null) {
+                lastAttributesEntity.strength = character.attributes.getSkill(1)
+                lastAttributesEntity.dexterity = character.attributes.getSkill(2)
+                lastAttributesEntity.constitution = character.attributes.getSkill(3)
+                lastAttributesEntity.intelligence = character.attributes.getSkill(4)
+                lastAttributesEntity.wisdom = character.attributes.getSkill(5)
+                lastAttributesEntity.charisma = character.attributes.getSkill(6)
+                lastAttributesEntity.skillPoints = character.attributes.getSkill(7)
+                lastAttributesEntity.healthPoints = character.attributes.getSkill(8)
+
+                attributesViewModel.updateAttributes(lastAttributesEntity)
             }
         }
     }
 }
 
 @Composable
-fun assignPointsScreen(character: Character) {
+fun AssignPointsScreen(character: Character, saveNewAttributes: (character: Character) -> Unit ) {
 
     val focusManager = LocalFocusManager.current
     var remainingPoints by remember { mutableIntStateOf(character.attributes.getSkill(7)) }
@@ -70,17 +102,17 @@ fun assignPointsScreen(character: Character) {
             fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 10.dp)
         )
-            attributeInputRow("Força", character, skillOption = 1, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
+            AttributeInputRow("Força", character, skillOption = 1, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
             Spacer(modifier = Modifier.height(8.dp))
-            attributeInputRow("Destreza", character, skillOption = 2, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
+            AttributeInputRow("Destreza", character, skillOption = 2, updatePoints = { remainingPoints = character.attributes.getSkill(7)})
             Spacer(modifier = Modifier.height(8.dp))
-            attributeInputRow("Constituição", character, skillOption = 3, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
+            AttributeInputRow("Constituição", character, skillOption = 3, updatePoints = { remainingPoints = character.attributes.getSkill(7)})
             Spacer(modifier = Modifier.height(8.dp))
-            attributeInputRow("Inteligência", character, skillOption = 4, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
+            AttributeInputRow("Inteligência", character, skillOption = 4, updatePoints = { remainingPoints = character.attributes.getSkill(7)} )
             Spacer(modifier = Modifier.height(8.dp))
-            attributeInputRow("Sabedoria", character, skillOption = 5, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
+            AttributeInputRow("Sabedoria", character, skillOption = 5, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
             Spacer(modifier = Modifier.height(8.dp))
-            attributeInputRow("Carisma", character, skillOption = 6, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
+            AttributeInputRow("Carisma", character, skillOption = 6, updatePoints = { remainingPoints = character.attributes.getSkill(7) })
 
             Text(
                 text = remainingPoints.toString(),
@@ -90,6 +122,10 @@ fun assignPointsScreen(character: Character) {
             )
         Button(
             onClick = {
+                character.addRaceBonus(character.attributes)
+                character.attributes.healthPointsModifier()
+
+                saveNewAttributes(character)
                 val intent = Intent(context, finalMenuActivity::class.java)
                 intent.putExtra("personagem", character)
                 context.startActivity(intent)
@@ -102,7 +138,7 @@ fun assignPointsScreen(character: Character) {
 
 
 @Composable
-fun attributeInputRow(skillName: String, character: Character, skillOption: Int, updatePoints: () -> Unit) {
+fun AttributeInputRow(skillName: String, character: Character, skillOption: Int, updatePoints: () -> Unit) {
     var points by remember { mutableStateOf("") }
     var successMessage by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
@@ -132,6 +168,7 @@ fun attributeInputRow(skillName: String, character: Character, skillOption: Int,
 
                             character.attributes.distributePoints(skillOption, pointsValue)
                             updatePoints()
+
                             points = ""
                             successMessage = "$skillName incrementada com sucesso"
                         } catch (e: IllegalArgumentException) {
